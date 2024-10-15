@@ -50,7 +50,10 @@ class BProtein
         if (!$this->pmidCount) return;
 
         // if ($this->pmidCount > 9999) {
-        //     // Shell Script
+        //     $this->installEDirect();
+        //     $this->exportToText();
+
+        //     dd('done');
         // }
 
         $client = new Client();
@@ -70,6 +73,57 @@ class BProtein
             }, $pmidArray);
         } catch (RequestException $e) {
             echo "Error fetching data: " . $e->getMessage() . "\n";
+        }
+    }
+
+
+    private
+    function installEDirect()
+    {
+        // Detect home directory and installation path
+        $homeDirectory = getenv('HOME');
+        if (!$homeDirectory) {
+            $homeDirectory = shell_exec('echo $HOME');
+            $homeDirectory = trim($homeDirectory);
+        }
+
+        // Define the install command
+        $installCommand = 'sh -c "$(curl -fsSL https://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/install-edirect.sh)"';
+
+        // Run the installation command
+        echo "Installing EDirect...\n";
+        $output = shell_exec($installCommand);
+        echo $output;
+
+        // Check if installation was successful
+        if (strpos($output, 'successfully downloaded and installed') === false) {
+            echo "EDirect installation failed.\n";
+            return false;
+        }
+
+        // Command to add PATH to the shell configuration
+
+        // Export PATH for the current terminal session
+        $exportPathCommand = 'export PATH=${HOME}/edirect:${PATH}';
+        shell_exec($exportPathCommand);
+
+        echo "EDirect installed and PATH updated successfully.\n";
+        return true;
+    }
+
+    private function exportToText()
+    {
+        // Define the command
+        $command = 'esearch -db pubmed -query "' . $this->proteinName . '" | efetch -format uid > pmids.txt';
+
+        // Execute the command
+        exec($command, $output, $return_var);
+
+        // Check if the command was successful
+        if ($return_var === 0) {
+            echo "PMIDs have been successfully exported to pmids.txt";
+        } else {
+            echo "Error executing command: return code " . $return_var;
         }
     }
 }
