@@ -63,4 +63,6 @@ Route::middleware('auth')->group(function () {
     Route::get('collect', [CollectController::class, 'index'])->name('collect.index');
 
     Route::post('protein/search', [CollectController::class, 'store'])->name('protein.store');
+
+    Route::get('protein/{protein}', [CollectController::class, 'show'])->name('protein.show');
 });

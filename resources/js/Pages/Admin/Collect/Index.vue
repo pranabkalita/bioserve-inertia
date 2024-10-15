@@ -4,7 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import Pagination from '@/Components/Pagination.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { pickBy } from 'lodash';
 import { onMounted, reactive, ref } from 'vue';
 
@@ -177,7 +177,7 @@ function importProteinData () {
                                             Laptop
                                         </td>
                                         <td class="px-6 py-4">
-                                            <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
+                                            <Link :href="route('protein.show', protein.id)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</Link>
                                         </td>
                                     </tr>
                                 </tbody>

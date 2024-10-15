@@ -60,4 +60,24 @@ class CollectController extends Controller
 
         return redirect()->route('collect.index')->with('Protein data collected.');
     }
+
+    public function show(Request $request, Protein $protein)
+    {
+        $articles = Article::with(['mutations'])
+            ->where('protein_id', $protein->id)
+            ->where('success', true)
+            ->has('mutations')
+            ->paginate(10);
+
+        // Map to add the mutation list as a comma-separated string
+        $articles->getCollection()->transform(function ($article) {
+            $article->mutationList = $article->mutations->pluck('name')->implode(', ');
+            return $article;
+        });
+
+        return Inertia::render('Admin/Collect/Show', [
+            'protein' => $protein,
+            'articles' => $articles
+        ]);
+    }
 }
