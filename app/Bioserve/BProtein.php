@@ -174,7 +174,7 @@ class BProtein
     private function exportToText()
     {
         // Define the command
-        $command = './edirect/esearch -db pubmed -query "' . $this->proteinName . '" | ./edirect/efetch -format uid > pmids.txt';
+        $command = './edirect/esearch -db pubmed -query "' . $this->proteinName . '" | ./edirect/efetch -format uid > _ids.txt';
 
         // Execute the command
         exec($command, $output, $return_var);

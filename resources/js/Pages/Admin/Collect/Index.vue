@@ -42,7 +42,7 @@ function importProteinData () {
     importing.value = true
 
     router.post(route('protein.store'), params, {
-        preserveState: true,
+        preserveState: false,
         onFinish: () => {
             importing.value = false
         }
@@ -171,7 +171,7 @@ function importProteinData () {
                                             {{ protein.name }}
                                         </th>
                                         <td class="px-6 py-4">
-                                            COUNT
+                                            {{ protein.articles_count }}
                                         </td>
                                         <td class="px-6 py-4">
                                             Laptop
