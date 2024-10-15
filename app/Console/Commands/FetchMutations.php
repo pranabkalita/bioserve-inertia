@@ -27,7 +27,7 @@ class FetchMutations extends Command
      */
     public function handle()
     {
-        Article::where('success', false)->take(10)->each(function ($article) {
+        Article::where('success', false)->take(60)->each(function ($article) {
             PerformFetchMutations::dispatch($article);
         });
 

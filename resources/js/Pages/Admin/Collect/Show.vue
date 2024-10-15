@@ -30,9 +30,9 @@ const { articles, protein } = defineProps({
                     <div class="p-6 text-gray-900">
                         <!-- Protein List -->
                         <template v-if="articles?.data?.length">
-                            <h1 class="my-5 text-4xl font-extrabold text-center text-gray-900 dark:text-white md:text-4xl lg:text-4xl">
+                            <!-- <h1 class="my-5 text-4xl font-extrabold text-center text-gray-900 dark:text-white md:text-4xl lg:text-4xl">
                                 <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Articles List</span>
-                            </h1>
+                            </h1> -->
 
                             <div class="pb-4 bg-white dark:bg-gray-900">
                                 <label for="table-search" class="sr-only">Search</label>

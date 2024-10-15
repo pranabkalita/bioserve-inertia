@@ -72,6 +72,43 @@ class BProteinTerminal
         }
     }
 
+    public function fetchPmid(int $pmid)
+    {
+        $command = './edirect/nquire -get https://icite.od.nih.gov api/pubs -pmids ' . $pmid . '';
+
+        $process = Process::fromShellCommandline($command);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            return false;
+            // return "Error executing command: " . $process->getErrorOutput() . " Return code: " . $process->getExitCode();
+        }
+
+        $output = $process->getOutput();
+        $data = json_decode($output, true)['data'];
+
+        dd($data);
+    }
+
+    public function fetchPmidWithAbstract(string $pmid)
+    {
+        $command = './edirect/efetch -db pubmed -id ' . $pmid . ' -format xml';
+
+        $process = Process::fromShellCommandline($command);
+
+        $process->run();
+        // dd(!$process->isSuccessful());
+        if (!$process->isSuccessful()) {
+            return false;
+        }
+
+        $output = $process->getOutput();
+
+        $xml = simplexml_load_string($output);
+
+        dd($xml);
+    }
 
     private function installEDirect()
     {

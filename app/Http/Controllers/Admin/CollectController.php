@@ -20,6 +20,7 @@ class CollectController extends Controller
 
         if ($request->get('search')) {
             $bProteinTerminal = new BProteinTerminal();
+            // $bProteinTerminal->fetchPmidWithAbstract('11595708, 8872468');
             $pmidCount = $bProteinTerminal->searchProtein($request->get('search'));
         }
 
