@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\PerformFetchMutations;
+use App\Jobs\PerformFetchMutationsBatch;
 use App\Models\Article;
 use Illuminate\Console\Command;
 
@@ -27,8 +28,10 @@ class FetchMutations extends Command
      */
     public function handle()
     {
-        Article::where('success', false)->take(60)->each(function ($article) {
-            PerformFetchMutations::dispatch($article);
+        // $article = Article::where('success', 0)->first();
+
+        Article::where('success', false)->take(10)->each(function ($article) {
+            PerformFetchMutationsBatch::dispatch($article);
         });
 
         return Command::SUCCESS;

@@ -91,14 +91,16 @@ class BProteinTerminal
         dd($data);
     }
 
-    public function fetchPmidWithAbstract(string $pmid)
+    public function fetchBatchPmidWithAbstract(string $pmid)
     {
-        $command = './edirect/efetch -db pubmed -id ' . $pmid . ' -format xml';
+        $edirect = public_path('edirect');
+
+        $command =  $edirect . '/efetch -db pubmed -id ' . $pmid . ' -format xml';
 
         $process = Process::fromShellCommandline($command);
 
         $process->run();
-        // dd(!$process->isSuccessful());
+        // dd($process->run(), $command);
         if (!$process->isSuccessful()) {
             return false;
         }
@@ -107,7 +109,7 @@ class BProteinTerminal
 
         $xml = simplexml_load_string($output);
 
-        dd($xml);
+        return $xml;
     }
 
     private function installEDirect()
