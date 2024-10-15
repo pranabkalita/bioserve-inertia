@@ -58,9 +58,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    // Auth
+    Route::get('collect', [CollectController::class, 'index'])->name('collect.index');
+
+    Route::post('protein/search', [CollectController::class, 'store'])->name('protein.store');
 });
-
-// Auth
-Route::get('collect', [CollectController::class, 'index'])->name('collect.index');
-
-Route::post('protein/search', [CollectController::class, 'store'])->name('protein.store');

@@ -5,6 +5,12 @@ namespace App\Bioserve;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
 class BProtein
 {
     protected string $proteinName = '';
@@ -49,12 +55,15 @@ class BProtein
     {
         if (!$this->pmidCount) return;
 
-        // if ($this->pmidCount > 9999) {
-        //     $this->installEDirect();
-        //     $this->exportToText();
+        if ($this->pmidCount > 9999) {
+            $edirect = public_path('edirect');
 
-        //     dd('done');
-        // }
+            if (!File::exists($edirect)) {
+                $this->installEDirect();
+            }
+
+            $this->exportToText();
+        }
 
         $client = new Client();
 
@@ -77,8 +86,7 @@ class BProtein
     }
 
 
-    private
-    function installEDirect()
+    private function __installEDirect()
     {
         // Detect home directory and installation path
         $homeDirectory = getenv('HOME');
@@ -111,10 +119,62 @@ class BProtein
         return true;
     }
 
+    public function moveEDirect()
+    {
+        // Define the source and destination paths
+        $source = public_path('edirect');
+        $destination = app_path('Bioserve/edirect');
+
+        // Check if the source directory exists
+        if (!File::exists($source)) {
+            return response()->json(['error' => 'Source directory does not exist.'], 404);
+        }
+
+        // Create the destination directory if it doesn't exist
+        if (!File::exists($destination)) {
+            File::makeDirectory($destination, 0755, true);
+        }
+
+        // Move the directory
+        try {
+            File::move($source, $destination);
+            return response()->json(['success' => 'EDirect moved successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to move EDirect: ' . $e->getMessage()], 500);
+        }
+    }
+
+    private function installEDirect()
+    {
+        // Define the full script path
+        $scriptPath = base_path('app/Bioserve/install_edirect.sh');
+
+        // Step 1: Add execute permission to the script
+        $chmodProcess = new Process(['chmod', '+x', $scriptPath]);
+        $chmodProcess->run();
+
+        // Check if the chmod command executed successfully
+        if (!$chmodProcess->isSuccessful()) {
+            throw new ProcessFailedException($chmodProcess);
+        }
+
+        // Step 2: Run the shell script using Process
+        $process = new Process(['sh', $scriptPath]);
+        $process->run();
+
+        // Check if the process executed successfully
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        // Output the result of the script execution
+        echo $process->getOutput();
+    }
+
     private function exportToText()
     {
         // Define the command
-        $command = 'esearch -db pubmed -query "' . $this->proteinName . '" | efetch -format uid > pmids.txt';
+        $command = './edirect/esearch -db pubmed -query "' . $this->proteinName . '" | ./edirect/efetch -format uid > pmids.txt';
 
         // Execute the command
         exec($command, $output, $return_var);
