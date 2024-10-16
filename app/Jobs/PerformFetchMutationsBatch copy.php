@@ -12,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class PerformFetchMutationsBatch
+class PerformFetchMutationsBatchCopy
 {
     // use Queueable;
 
@@ -39,18 +39,9 @@ class PerformFetchMutationsBatch
         $pmids = ProcessMutation::first()->pmids;
 
         $bProtein = new BProteinTerminal();
+        $xml = $bProtein->fetchBatchPmidWithAbstract($pmids);
 
-        try {
-            // Fetch the batch of articles using the PMIDs
-            $xml = $bProtein->fetchBatchPmidWithAbstract($pmids);
-            $citationsAndData = $this->prepareXMLForProcessing($xml);
-
-            // Process the fetched mutations
-            $this->processMutations($citationsAndData);
-        } catch (\Exception $e) {
-            // Log the error and continue with the next batch
-            Log::error('Error in fetching or processing mutations: ' . $e->getMessage());
-        }
+        $this->processMutations($xml);
     }
 
     private function processMutations($xml)
@@ -59,18 +50,8 @@ class PerformFetchMutationsBatch
             DB::beginTransaction(); // Start transaction for each loop
 
             try {
-                $pmid = (int) $element['MedlineCitation']['PMID'];
-
-                $abstract = '';
-
-                if (isset($element['MedlineCitation']['Article']['Abstract'])) {
-                    $abstractText = $element['MedlineCitation']['Article']['Abstract']['AbstractText'];
-                    if (is_array($abstractText)) {
-                        $abstract = implode(' ', $abstractText);
-                    } else {
-                        $abstract = $abstractText;
-                    }
-                }
+                $pmid = (int) $element->MedlineCitation->PMID;
+                $abstract = (string) $element->MedlineCitation->Article->Abstract->AbstractText;
 
                 $mutationPattern = '/\b[A-Z]\d{2,5}[A-Z]\b/';
                 $matches = [];
@@ -109,33 +90,5 @@ class PerformFetchMutationsBatch
                 Log::error('Error processing PMID: ' . $pmid . '. Error: ' . $e->getMessage());
             }
         }
-    }
-
-    private function prepareXMLForProcessing($data)
-    {
-        $results = [];
-
-        // Check if "PubmedArticle" is set in the array
-        if (isset($data['PubmedArticle'])) {
-            $pubmedArticles = $data['PubmedArticle'];
-
-            // Check if it's a single PubmedArticle (not an indexed array)
-            if (isset($pubmedArticles['MedlineCitation']) && isset($pubmedArticles['PubmedData'])) {
-                // Single PubmedArticle case
-                $pubmedArticles = [$pubmedArticles];
-            }
-
-            // Loop through each PubmedArticle and extract MedlineCitation with PubmedData
-            foreach ($pubmedArticles as $article) {
-                if (isset($article['MedlineCitation']) && isset($article['PubmedData'])) {
-                    $results[] = [
-                        'MedlineCitation' => $article['MedlineCitation'],
-                        'PubmedData'      => $article['PubmedData'],
-                    ];
-                }
-            }
-        }
-
-        return $results;
     }
 }
