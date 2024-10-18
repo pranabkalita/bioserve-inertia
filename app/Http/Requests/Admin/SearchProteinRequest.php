@@ -22,7 +22,7 @@ class SearchProteinRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search' => ['min:2', 'unique:proteins,name']
+            'search' => ['min:2']
         ];
     }
 

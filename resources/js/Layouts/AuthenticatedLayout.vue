@@ -39,13 +39,6 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
-
-                                <NavLink
-                                    :href="route('collect.index')"
-                                    :active="route().current('collect.index')"
-                                >
-                                    Collect
-                                </NavLink>
                             </div>
                         </div>
 

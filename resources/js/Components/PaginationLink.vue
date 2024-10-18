@@ -4,15 +4,6 @@ import { Link, router } from '@inertiajs/vue3'
 defineProps({
     pagination: Object
 })
-
-function navigate (url) {
-    if (url) {
-        router.get(url, {}, {
-            preserveScroll: true,
-            preserveState: true
-        })
-    }
-}
 </script>
 
 <template>
@@ -21,8 +12,8 @@ function navigate (url) {
 
         <nav class="relative flex justify-center">
             <div v-for="link in pagination.links" :key="link.label">
-                <a
-                    v-on:click.prevent="navigate(link.url ?? '')"
+                <Link
+                    preserve-scroll
                     :href="link.url ?? ''"
                     v-html="link.label"
                     class="flex items-center justify-center px-3 py-2 text-sm rounded-lg text-gray-600"

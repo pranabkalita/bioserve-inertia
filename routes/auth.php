@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CollectController;
+use App\Http\Controllers\Admin\MutationController;
+use App\Http\Controllers\Admin\ProteinController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -60,9 +63,13 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 
     // Auth
-    Route::get('collect', [CollectController::class, 'index'])->name('collect.index');
+    // Route::get('collect', [CollectController::class, 'index'])->name('collect.index');
 
-    Route::post('protein/search', [CollectController::class, 'store'])->name('protein.store');
+    // Route::post('protein/search', [CollectController::class, 'store'])->name('protein.store');
 
-    Route::get('protein/{protein}', [CollectController::class, 'show'])->name('protein.show');
+    // Route::get('protein/{protein}', [CollectController::class, 'show'])->name('protein.show');
+
+    Route::get('admin/proteins', [ProteinController::class, 'index'])->name('admin.proteins.index');
+    Route::post('admin/articles', [ArticleController::class, 'store'])->name('admin.articles.store');
+    Route::post('admin/mutations', [MutationController::class, 'store'])->name('admin.mutations.store');
 });
