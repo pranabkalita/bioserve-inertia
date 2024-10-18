@@ -6,6 +6,7 @@ use App\Bioserve\BProteinTerminal;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Mutation;
+use App\Models\Protein;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -54,8 +55,6 @@ class MutationController extends Controller
             try {
                 $pmid = (int) $element['MedlineCitation']['PMID'];
 
-                $abstract = '';
-
                 if (isset($element['MedlineCitation']['Article']['Abstract'])) {
                     $abstractText = $element['MedlineCitation']['Article']['Abstract']['AbstractText'];
                     if (is_array($abstractText)) {
@@ -65,10 +64,14 @@ class MutationController extends Controller
                     }
                 }
 
-                $mutationPattern = '/\b[A-Z]\d{2,5}[A-Z]\b/';
+                $protein = Protein::findOrFail($this->protein_id);
+
+                // $mutationPattern = '/\b[A-Z]\d{2,5}[A-Z]\b/'; // Working normally, not protein specific
+                $mutationPattern = '/(?:\b' . $protein->name . '\b(?:[\s-])?|(?<![A-Za-z\d-]))[A-Z]\d{2,5}[A-Z]\b(?![A-Za-z\d-])/';
+                // dd($mutationPattern, $abstract);
+
                 $matches = [];
                 preg_match_all($mutationPattern, $abstract, $matches);
-
                 $uniqueMutations = array_unique($matches[0]);
 
                 // Update PMID: status = 1
