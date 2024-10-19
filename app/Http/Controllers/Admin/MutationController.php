@@ -55,6 +55,7 @@ class MutationController extends Controller
             try {
                 $pmid = (int) $element['MedlineCitation']['PMID'];
 
+                $abstract = '';
                 if (isset($element['MedlineCitation']['Article']['Abstract'])) {
                     $abstractText = $element['MedlineCitation']['Article']['Abstract']['AbstractText'];
                     if (is_array($abstractText)) {
