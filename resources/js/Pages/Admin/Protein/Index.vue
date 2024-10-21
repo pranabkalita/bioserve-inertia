@@ -55,7 +55,7 @@ watch(
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Proteins" />
 
     <AuthenticatedLayout>
         <template #header>

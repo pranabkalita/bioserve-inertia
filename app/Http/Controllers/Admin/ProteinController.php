@@ -23,4 +23,11 @@ class ProteinController extends Controller
             'search' => $request->get('search')
         ]);
     }
+
+    public function show(Request $request, Protein $protein)
+    {
+        return Inertia::render('Admin/Protein/Show', [
+            'protein' => $protein
+        ]);
+    }
 }

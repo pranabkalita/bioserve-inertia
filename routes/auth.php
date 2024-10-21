@@ -70,6 +70,8 @@ Route::middleware('auth')->group(function () {
     // Route::get('protein/{protein}', [CollectController::class, 'show'])->name('protein.show');
 
     Route::get('admin/proteins', [ProteinController::class, 'index'])->name('admin.proteins.index');
+    Route::get('admin/proteins/{protein:name}', [ProteinController::class, 'show'])->name('admin.protein.index');
+
     Route::post('admin/articles', [ArticleController::class, 'store'])->name('admin.articles.store');
     Route::post('admin/mutations', [MutationController::class, 'store'])->name('admin.mutations.store');
 });
